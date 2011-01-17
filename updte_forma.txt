@@ -1,0 +1,26 @@
+<form action="http://www.veritweet.com/unsecure_home.php" id="uploadform" name="uploadform" enctype="multipart/form-data" method="post">
+							<textarea id="description" name="description" MAXLENGTH="140" placeholder="Write your VeriTweet update here!"></textarea>
+							<input type="image" src="icons/gray/19.png" value="ubdate forma post jquery.form" /> 
+						<div class="inputfile">	
+							<input type="file"  name="file" >
+						</div>	
+				<!--		
+				<input type="hidden" value="bez_vardiem" name="username">   id="file"
+							<input type="hidden" value="test" name="password1"> --->
+							<input type="hidden" value="1" name="subupdate">
+						<input type="image" src="icons/gray/19.png" value="ubdate forma post jquery.form" /> 
+			<!--				<input type="image" src="icons/gray/12.png" value="update ar ajax bez faila" onClick="update();">  --->
+	</form> 
+	
+	
+						<form action="http://www.veritweet.com/unsecure_home.php" id="uploadform" name="uploadform" enctype="multipart/form-data" method="post">
+							<textarea id="description" name="description" MAXLENGTH="140" placeholder="Write your VeriTweet update here!"></textarea>
+							<span id="countdown"></span>
+
+							
+						<div class="inputfile">	
+							<input type="file"  name="file" >
+						</div>	
+						
+						<input id="update_button" type="image" src="icons/gray/19.png" value="Update!" /> 
+					</form> 
