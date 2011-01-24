@@ -1,4 +1,4 @@
 This is the draft project of VeriTweet Desktop Client - Desktop Client explodes capabilities of VeriTweet microblogging cloud service for verified People and Businesses.
-We are building application on Appcelerator Titanium framework.
+We are building application on Appcelerator Titanium Desktop framework.
 The application will be available for win mac linux environments and communicate with VeriTweet web services API.
 Additionally to VeriTweet's real time social media services, it will be used as ordinary Twitter client through Veritweet proxy, offereng reach user interface.
