@@ -1,0 +1,103 @@
+/* ///////////////////////////////////////////////////////////////////              Message */
+.MsgContainer {
+	-webkit-box-flex:1;
+	background: #f5f5f5;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	margin-right:10px;
+}
+.MsgContainer  .mmcontainer{
+	padding:0; margin:0;
+}
+.Msg {
+	position:relative;
+	overflow:hidden;
+	border: 1px solid #dfddd9;
+	background: #fff;
+	margin:10px;
+	-webkit-box-flex:1;
+	-webkit-box-orient: horizontal;
+}
+
+.MsgPicture {
+	position:absolute;
+	top:0;
+	display:block;
+	float:left;
+	width:60px;
+	height:60px;
+	margin:6px;
+}
+
+.MsgPicture img {
+	width:60px;
+	height:60px;
+	text-align:center;
+	vertical-align:middle;
+    /*-webkit-transition: all 0.2s ease-in-out;*/
+}
+
+/*.MsgPicture:hover img { 
+	position:relative;
+	width:100px;
+	height:100px;
+   -webkit-transition: all 0.2s ease-in-out;
+}*/
+
+.MsgBody {
+	margin-left:90px;
+	margin-top:5px;
+	font-size: 13px;
+	text-overflow: ellipsis;
+}
+.MsgBody strong{
+	color:#5093ee;
+}
+.MsgBody p{
+	margin:5px 0 30px 0;
+	padding:0;
+	color:#212121;
+}
+.MsgBody .MsgImage{
+	display:block;
+	max-width:80px;
+	max-height:60px;
+	float:right;
+	margin:8px;
+	margin-top:4px;
+}
+.MsgBody img{
+	max-width:80px;
+	max-height:60px;
+}
+.MsgInfo {
+	position:absolute;
+	font-size:10px;
+	padding: 0 3px 0 0;
+	left:90px;
+	bottom:3px;
+	color:#a9a9a9;
+}
+.MsgInfo a{
+	color:#a9a9a9;
+	text-decoration:none;
+}
+
+.MsgActions {
+	visibility::hidden;
+}
+.MsgTime {
+display:none;
+}
+
+.messageline {
+	margin:5px 0 30px 0;
+	padding:0;
+	color:#212121;
+}
+.usernamefield {
+font-weight:bold;
+color:#5093ee;
+}
+/* ///////////////////////////////////////////////////////////////////               */
+/*=======================================================*/

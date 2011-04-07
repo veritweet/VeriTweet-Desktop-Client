@@ -3,43 +3,40 @@
  
  	initApp: function(){
 	
+		$('#navigation_demo').hide(1000);
+		$('#navigation_user').show(1000);	
+	
 	$('#version').html("Version "+Titanium.App.getVersion());
 	////////////////////////////////////////////////	
 	
-		setStatusMsg('Starting app init');
-		createImageFolders();
+		setStatusMsg('Starting app.');
+		createImageFolders();		
+		//database.reinitDB();			
 		
-		//database.initDB();
-		//database.dropAllTables();				
 		database.initDB();
 		veritweet.getTrends();
-		//mainLogic.getUserUpdates();		
-		//database.selectUserUpdates(user.myuserid);
-		
-	//following sarakstu paradam izmantojot events.js eventu un interface.js funkciju
-	//showProgresWheel('following_container');
-		//Titanium.API.fireEvent('showFollowing');
-	
-	//paradam jaunakos ierakstus no db
-		//showProgresWheel('MsgContainer');
-		//showLatestFeed();				
-		//setStatusMsg('Application initialised');		
-		
-	veritweet.getFollowing();
-	veritweet.getFollowers();
-	
-	//Titanium.API.fireEvent('showFollowing');
-	
-	//veritweet.getFollowers();
-	//mainLogic.getFollowersUpdates(); 		
-		
-	//novelkam jaunakos apdeitus	
-	//veritweet.getFollowingUpdates();
-	setInterval("veritweet.getFollowingUpdates()", 30000);
-	 
-	//alert(database.getLastUpdateId(314));
-	 
+				
+		veritweet.getFollowing();
+		veritweet.getFollowers();
+				
+		setInterval("Titanium.API.fireEvent('onCheckForUpdatesOnServer')", 30000);
+
  	}, 
+	
+	initAppDemo: function(){
+	
+		$('#version').html("Version "+Titanium.App.getVersion());
+
+		user.username = "demouser";
+		user.password = "demouser";
+		user.myuserid = "1";
+		user.dbname="1-database";
+		database.initDB();	
+
+		online.loadDemoCategories();
+		veritweet.getTrends();
+		setStatusMsg('Demo user login.');	
+	},
 	
 	//funkcija aizver splash screen, kas ir main screen programmai, izsaucas no otra loga body onunload()
 	closeApp: function(){	
@@ -48,24 +45,44 @@
 	},
  	
  	processLogin: function(msg){
- 																
+ 														
 		if (msg!="login error") {
-
+			$('#MsgContainer').html('<span id="loading_ajax"><br/><br/><br/><center><img src="img/loading_ajax.gif"/></center></span>');
+			$('#followers_container').html('<span id="loading_ajax"><br/><center><img src="img/loading_ajax.gif"/></center><br/></span>');
+			$('#following_container').html('<span id="loading_ajax"><br/><center><img src="img/loading_ajax.gif"/></center><br/></span>');
+			$('#trends_container').html('<span id="loading_ajax"><br/><center><img src="img/loading_ajax.gif"/></center><br/></span>');
+																
+			localStorage.setItem('last_username', user.username);
+			localStorage.setItem('last_password', user.password);
+			localStorage.setItem('last_myuserid', msg);			
+									
 		    user.myuserid = msg;
 		    user.dbname=msg+"-database";
 		    setStatusMsg('Login ok.');
 			
+			$("#uploadform_username").val(user.username);
+			$("#uploadform_password1").val(user.password);
+						
 			veritweet.getProfile();
-		    mainLogic.initApp();		    
+		    mainLogic.initApp();	
+			
+			$('#login_msg').html('');
+			$("#dialog-message").dialog('close');			
 		} 
 		 else 
 		{
+			//saglabajam usernami, bet notiram password lauku..
+			localStorage.setItem('last_username', user.username);
+			localStorage.setItem('last_password', '');
+			
+			setStatusMsg('Incorrect login');
 			user.username="";
 			user.password="";
 		    user.myuserid="";
 		    user.dbname="";
-
-			alert("Incorrect login!");
+			
+			$('#login_msg').html('<center>Login unsuccessful. <br/>Try again!</center>'); 
+			//show_login();
 		};
 		 	
  	},
@@ -84,15 +101,7 @@
 					veritweet.getUpdates(data[dataEntry].USERID);
 					};
  	},
- 	
-	
-   /////////////////////////////////////////////////////////////////////
-   getTrends: function(termins){
-   
-   
-   
-   },
-	
+ 		
  	//==========================================================PROFILES
  	getUserProfile: function(){
 	 	veritweet.getProfile();
@@ -119,27 +128,28 @@
  	},
 	
 	updatePosted: function(msg){
-		setStatusMsg(msg);
-		Titanium.API.fireEvent('updatePosted');
 	
+		Titanium.API.fireEvent('updatePosted');
 	}
  		
  }; 
  
 //=================================USERIS - TODO japarceï uz localstorage
  var user = {
- 	username: "Desktop.Client",
- 	password: "12345678",
+ 	username: "",
+ 	password: "",
  	myuserid: "",
  	dbname:""
  };  
  
- //mainigais kura likt pedejo redzamo update
+ //mainigais kura likt pedejo redzamo update TODO - parbaudit vai vel vajag shito mainigo ?
  var temp = {};
+ 
+ //globalais mainigais, kura likt sobrid radamo feed
+ var current_userid = "";
 
 //startejam app, kad viss ielâdçts
 $(document).ready(function() {			
-	//mainLogic.initApp();		
 	
 //=================================================================================================================UPDATE MANAGER
 	   var uManager = Titanium.UpdateManager.startMonitor(['app_update','sdk'],'alert("New update");',60000);
@@ -148,28 +158,17 @@ $(document).ready(function() {
 			var mess = 'A new version: ' + details.version + ' is available. Would you like to install it?';
 			var con = confirm(mess);
 			if (con)    {		   
-					 // this function installs the new updated version of my app
 					uManager.installAppUpdate(details, function(){
 						alert('The new version has been installed');
 					});
 				}
 		};
+		
 //=================================================================================================================UPDATE MANAGER BEIGAS	
 
-	setStatusMsg('Login...');
-	show_login();
+	setStatusMsg('Welcome to Veritweet!');
+	show_dialog_new_user()
+	//show_login();
 
 });
 
-//===============================================CSS switcher
-//TODO: - saglabat uzslegto
-//TODO: - parslegt tikai master.css izveloties to no mapes /usercss
-
-$(document).ready(function() { 
-	$("#css_switcher li a").click(function() { 
-		//$("link").attr("href",$(this).attr('rel'));
-		$("#masterCSS").attr({href : $(this).attr('href')});
-		//$("#masterCSS").attr({href : "css/master2.css"});
-		return false;
-	});
-});

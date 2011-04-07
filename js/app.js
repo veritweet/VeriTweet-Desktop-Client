@@ -1,4 +1,6 @@
 
+document.getElementById('splashmsg').innerHTML = "Veritweet Desktop Client Version "+Titanium.App.getVersion();	
+
 //funkcija splash loga paslepsanai
 //logu var aizvert tikai, kad tiek aizverts main.html, jo savadak programmai pazud main logs un ta aizveras pavisam..
 function closeCurrentWindow(){
@@ -8,19 +10,12 @@ function closeCurrentWindow(){
 
 $(document).ready(function() { 
 
-document.getElementById('splashmsg').innerHTML = "Starting up...";
-document.getElementById('splashmsg').innerHTML = "Opening main window...";
-
 var splashWindow = Titanium.UI.getCurrentWindow();
 
 mainWindow = Titanium.UI.createWindow({
         id: "mainWindow",
         url: "app://main.html",
         title: "Veritweet desktop client",
-        //contents: "<html>foo!</html>"
-        //baseURL: "app://main.html"
-        //x: 300,
-        //y: 400,
         width: 800,
         minWidth: 500,
         maxWidth: 3000,
@@ -42,13 +37,7 @@ mainWindow = Titanium.UI.createWindow({
     });
 	
 
-//mainWindow.open();
-document.getElementById('splashmsg').innerHTML = "Welcome to Veritweet!!!";	
-var delay = setInterval("mainWindow.open();",1000);
-var delay = setInterval("closeCurrentWindow()",1000);
-
-
-
-
+var delay = setInterval("mainWindow.open();",3000);
+var delay = setInterval("closeCurrentWindow()",3000);
 
 });

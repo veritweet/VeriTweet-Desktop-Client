@@ -99,9 +99,17 @@ function profileImageThumb(USERID){
     var filename = USERID+'.jpg';
     var folder = '/images/membersprofilepic/thumbs';
   
+	var image = "";
+  
   	var f = Titanium.Filesystem.getFile( ApplicationDataDirectory+folder,filename);
-	var image = 'file:///'+f.nativePath();
-    image = '<img src="'+image+'">';	
+	if (f.exists()) {
+		var image = 'file:///'+f.nativePath();
+		image = '<img src="'+image+'">';	
+	
+	}
+	
+	
+
   
    return image;
  }

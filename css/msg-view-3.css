@@ -1,0 +1,173 @@
+/* ///////////////////////////////////////////////////////////////////              Message */
+.MsgContainer {
+	-webkit-box-flex:1;
+	background: #fff;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+.Msg {
+	float:left;
+	overflow:hidden;
+	border-bottom: 1px solid #dfddd9;
+	background: #fff;
+	
+}
+.MsgContainer  .mmcontainer{
+	position:relative;
+	padding:30px;
+	padding-top:35px;
+}
+.W0.col2 .mmcontainer, .W1.col1 .mmcontainer, .W2.col1 .mmcontainer{
+	position:relative;
+	padding-top:50px;
+}
+.W0, .W1, .W2 {
+	height:200px;
+}
+/* /////////////////////////////////////////////////////////////////// */
+.W0.col1{
+	width:25%;
+	border-right: 1px solid #dfddd9;
+}
+.W0.col2{
+	width:45%;
+
+}
+.W0.col3{
+	width:29%;
+}
+/* /////////////////////////////////////////////////////////////////// */
+.W1.col1{
+	width:55%;
+	border-right: 1px solid #dfddd9;
+}
+.W1.col2{
+	width:20%;
+	border-right: 1px solid #dfddd9;
+}
+.W1.col3{
+	width:24%;
+}
+/* /////////////////////////////////////////////////////////////////// */
+.W2.col1{
+	width:40%;
+	border-right: 1px solid #dfddd9;
+}
+.W2.col2{
+	width:25%;
+	border-right: 1px solid #dfddd9;
+}
+.W2.col3{
+	width:34%;
+}
+/* /////////////////////////////////////////////////////////////////// */
+
+
+.MsgPicture {
+	display:block;
+	float:left;
+	margin:6px;
+	margin-left:0;
+}
+
+.MsgPicture img {
+	max-width:60px;
+	max-height:60px;
+	text-align:center;
+	vertical-align:middle;
+    /*-webkit-transition: all 0.2s ease-in-out;*/
+}
+.W0.col1 .MsgPicture img, .W1.col2 .MsgPicture img, .W2.col2 .MsgPicture img, .W1.col3 .MsgPicture img{
+	max-width:18px;
+	max-height:18px;
+	margin-right:10px;
+}
+/*.MsgPicture:hover img { 
+	position:relative;
+	width:100px;
+	height:100px;
+   -webkit-transition: all 0.2s ease-in-out;
+}*/
+
+.MsgBody {
+	margin-left:84px;
+	margin-top:5px;
+	font-size: 14px;
+	text-overflow: ellipsis;
+}
+.MsgBody p{
+	font: 15px Georgia, "Times New Roman", Times, serif;
+
+	padding-left: 0px;
+	text-indent: -18px;
+	margin:10px 0 0 0;
+	width: auto;
+	color:#212121;
+}
+.MsgBody p:first-letter{
+	
+	padding-left: 18px;
+}
+.W0.col1 .MsgBody, .W1.col2 .MsgBody, .W2.col2 .MsgBody, .W1.col3 .MsgBody{
+	margin-left:0px;
+	margin-top:5px;
+	font-size: 14px;
+}
+.MsgBody strong{
+	font-family: Georgia, "Times New Roman", Times, serif;
+	color:#5093ee;
+	line-height:20px;
+}
+.MsgBody img{
+	max-width:80px;
+	max-height:60px;
+	float:right;
+	margin:10px 18px 4px 4px;
+}
+.W0.col1 .MsgBody img, .W0.col3 .MsgBody img, .W1.col2 .MsgBody img, .W2.col2 .MsgBody img, .W1.col3 .MsgBody img{
+	max-width:40px;
+	max-height:30px;
+	float:right;
+}
+.W0.col1 .MsgBody p, .W0.col3 .MsgBody p, .W1.col2 .MsgBody p, .W2.col2 .MsgBody p, .W1.col3 .MsgBody p{
+	margin:10px 0 0 18px;
+}
+
+.MsgInfo {
+		position:absolute;
+	font-size:10px;
+	padding: 0 3px 0 0;
+	left:90px;
+	bottom:3px;
+	color:#a9a9a9;
+}
+.MsgInfo a{
+	color:#a9a9a9;
+	text-decoration:none;
+}
+
+.MsgActions {
+	visibility::hidden;
+}
+
+.MsgTime {
+display:none;
+}
+
+.messageline {
+	font: 16px Georgia, "Times New Roman", Times, serif;
+	padding-left: 0px;
+	text-indent: -18px;
+	margin:10px 0 0 0;
+	width: auto;
+	color:#212121;
+}
+.usernamefield {
+display:none;
+font-weight:bold;
+color:#5093ee;
+}
+
+/* ///////////////////////////////////////////////////////////////////               */
+/*=======================================================*/

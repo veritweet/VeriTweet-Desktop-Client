@@ -10,13 +10,11 @@ var database = {
         db.execute('CREATE TABLE IF NOT EXISTS updates (ID REAL UNIQUE, type TEXT, USERID TEXT, PID TEXT, UID TEXT, UIDO TEXT, msg TEXT, pic TEXT, time_added TEXT, views TEXT, reply TEXT, edited TEXT, public TEXT, twitter_status_id TEXT, twitter_update_type TEXT, username TEXT)');
         db.execute('CREATE TABLE IF NOT EXISTS members (USERID REAL UNIQUE, email TEXT, username TEXT, firstname TEXT, lastname TEXT, birthday TEXT, gender TEXT, address TEXT, city TEXT, postal_code TEXT, state TEXT, country TEXT, phone TEXT, profileviews TEXT, addtime TEXT, lastlogin TEXT, verified TEXT, status TEXT, profilepicture TEXT, saying TEXT, website TEXT, interests TEXT, showAge TEXT, bg TEXT, showbg TEXT, tile TEXT, public TEXT, alert_com TEXT, alert_msg TEXT, alert_fol TEXT, alert_fr TEXT, fil1 TEXT, fil2 TEXT, fil3 TEXT, fil4 TEXT, fil5 TEXT, twit_use TEXT, tw_id TEXT, tw_name TEXT, tw_screen_name TEXT, tw_location TEXT, tw_description TEXT, tw_profile_image_url TEXT, tw_url TEXT, tw_verified TEXT, tw_profile_background_image_url TEXT, tw_fakeuser TEXT, last_twitter_post TEXT, legal_name TEXT, cl_peoplorbus TEXT, tw_followers TEXT, tw_following TEXT, tw_tweets TEXT)');
     
-        //Titanium.API.info('sql db initialised');
 		log('sql db initialised');
     },
     
 	dropTable: function(table){
 		db = Titanium.Database.open(user.dbname);
-		//db.execute('DELETE FROM '+table);	
 		db.execute('DROP TABLE '+table);
 		Titanium.API.info('Database table:'+table+' dropped');
 	},
@@ -29,14 +27,17 @@ var database = {
 		Titanium.API.info('All database tables dropped');
 	},
     
+	reinitDB: function(){
+		db = Titanium.Database.open(user.dbname);
+		database.dropAllTables();
+		database.initDB();	
+	},
+	
 //FOLLOWERS
 //==============================================================================PROCESS FOLLOWERS
 	processFollowers: function(data){
-		//alert('processFollowers - '+data);
 		var dataJ = JSON.parse(data);
-		
-	//////////////////////////////////
-			//alert('processFollowing - '+data);
+
 		var dataJ = JSON.parse(data);
 		
 		db = Titanium.Database.open(user.dbname);
@@ -52,20 +53,15 @@ var database = {
 				db.execute('END TRANSACTION');
 				db.close();
 		
-	Titanium.API.fireEvent('showFollowers');
-	////////////////////////////////
-	
+	Titanium.API.fireEvent('showFollowers');	
 	},
 	
 //==============================================================================INSERT FOLLOWERS
-    insertFollowers: function(entryJ) {
-    	//db = Titanium.Database.open(user.dbname);
-    	
+    insertFollowers: function(entryJ) {    	
     	var USERID = entryJ.USERID;
 	    var username = entryJ.username;
 	   
     	db.execute('INSERT INTO followers (USERID, username) VALUES (?, ?)', USERID, username);
-
     }, 
 
 //==============================================================================SELECT FOLLOWERS
@@ -75,15 +71,12 @@ var database = {
 
 		var rows = db.execute('SELECT * FROM followers');
 		while (rows.isValidRow()) 
-		{
-			//var currentData = [];
-							
+		{							
 		  	data.push({
 		    	USERID: rows.fieldByName('USERID'),
 		    	username: rows.fieldByName('username')
   			});
-  			
-  			//Titanium.API.info('select no followeru tabulas:'+rows.fieldByName('USERID') + ' - '+rows.fieldByName('username'));  			
+			
 			rows.next();
 		}
 		rows.close();
@@ -100,47 +93,25 @@ var database = {
 		db = Titanium.Database.open(user.dbname);
 		db.execute('BEGIN TRANSACTION');
 		db.execute('DELETE FROM following');
-		
-	/*
-	//http://mess.genezys.net/jquery/jquery.async.php
-		jQuery.eachAsync(dataJ, {
-			delay: 100,
-			bulk: 0,
-			loop: function(index, value)
-			{ 
-				database.insertFollowing(value);	
-			},
-			end: function()
-			{ 
-				Titanium.API.fireEvent('showFollowing');
-				db.execute('END TRANSACTION');
-			}
-		})
-		
-	*/
-	
-	for (dataEntry in dataJ)
-					{
-					entryJ = dataJ[dataEntry];					
-					database.insertFollowing(entryJ);					
-					};	
+			
+		for (dataEntry in dataJ)
+						{
+						entryJ = dataJ[dataEntry];					
+						database.insertFollowing(entryJ);					
+						};	
 
-	db.execute('END TRANSACTION');
-	db.close();
+		db.execute('END TRANSACTION');
+		db.close();
 		
 		Titanium.API.fireEvent('showFollowing');
 	},
 	
 //==============================================================================INSERT FOLLOWING
-	insertFollowing: function(entryJ) {    	
-    	
+	insertFollowing: function(entryJ) {	
     	var USERID = entryJ.USERID;
 	    var username = entryJ.username;
-	    				
-    	//db.execute('DELETE FROM following WHERE USERID='+USERID);
+
     	db.execute('INSERT INTO following (USERID, username) VALUES (?, ?)', USERID, username);
-            
-    	//Titanium.API.info(USERID+' - '+username+' inserted into following table');
     }, 
     
 //==============================================================================SELECT FOLLOWING
@@ -154,10 +125,7 @@ var database = {
 		  	data.push({
 		    	USERID: rows.fieldByName('USERID'),
 		    	username: rows.fieldByName('username')
-  			});
-  			
-  			//Titanium.API.debug('select no following tabulas:'+rows.fieldByName('USERID') + ' - '+rows.fieldByName('username'));
-  			
+  			}); 			
 			rows.next();
 		}
 		rows.close();
@@ -183,7 +151,7 @@ var database = {
 		}
 		rows.close();
 		
-		//pieliek pasreizeja usera id
+		//current usera id
 			if (data!="") {
 				data = "("+data+", "+user.myuserid+")";
 			} else {
@@ -195,76 +163,13 @@ var database = {
 	
 //UPDATES
 //==============================================================================LAST USER UPDATE ID DB
-
-	getUserLastUpdateId: function (userid) {
-		db = Titanium.Database.open(user.dbname);
-	    var lastUpdateID = null;
-	
-		var rows = db.execute("SELECT ID FROM updates WHERE USERID='"+userid+"' ORDER BY ID desc LIMIT 1");
-		while (rows.isValidRow()) 
-		{  			
-  			lastUpdateID = rows.fieldByName('ID');  			
-  			Titanium.API.debug('Last update ID for user '+userid+' = '+lastUpdateID);  			
-			rows.next();
-		}
-		rows.close();
-	
-	    return lastUpdateID;	
-	},
-	
-	getLastUpdateId: function (useris) { 
-		db = Titanium.Database.open(user.dbname);
-	    var lastUpdateID = null;
-		var query;
-	
-	    if(useris==undefined) {
-			//panem visus kam seko
-			var userList = database.selectFollowingIdList();
-			//pieliek pasreizeja usera id
-			/*
-			if (userList!="") {
-				userList = "("+userList+", "+user.myuserid+")";
-			} else {
-				userList = "("+user.myuserid+")";		
-			}
-			*/
-			
-			//alert(userList);
-			query = "SELECT ID FROM updates WHERE USERID IN "+userList+" ORDER BY ID desc LIMIT 1";			
-			
-		} else {	
-			query = "SELECT ID FROM updates WHERE USERID='"+useris+"' ORDER BY ID desc LIMIT 1";
-		};
-	
-		var rows = db.execute(query);
-		while (rows.isValidRow()) 
-		{  			
-  			lastUpdateID = rows.fieldByName('ID');  			
-  			Titanium.API.debug('Last update ID for user '+useris+' = '+lastUpdateID);  			
-			rows.next();
-		}
-		rows.close();
-	
-	    return lastUpdateID;
-	},
-
 	getLastUpdateTimeAdded: function (useris) { 
 		db = Titanium.Database.open(user.dbname);
 	    var lastUpdateTimeAdded = null;
 		var query;
 	
 	    if(useris==undefined) {
-			//panem visus kam seko
-			var userList = database.selectFollowingIdList();
-			//pieliek pasreizeja usera id
-			/*
-			if (userList!="") {
-				userList = "("+userList+", "+user.myuserid+")";
-			} else {
-				userList = "("+user.myuserid+")";		
-			}
-			*/
-			
+			var userList = database.selectFollowingIdList();		
 			query = "SELECT time_added FROM updates WHERE USERID IN "+userList+" ORDER BY DATETIME(time_added) desc LIMIT 1";			
 			
 		} else {	
@@ -278,12 +183,11 @@ var database = {
 			rows.next();
 		}
 		rows.close();
-		
-		setStatusMsg('Last update time added: '+ lastUpdateTimeAdded);		
+	
 	    return lastUpdateTimeAdded;	
 	},
-
-	//following saraksta updates
+	
+//=============================================================================getNewFollowingUpdatesCount
 	getNewFollowingUpdatesCount: function (time_added) { 
 		db = Titanium.Database.open(user.dbname);
 	    var newFollowingUpdatesCount = 0;
@@ -297,28 +201,11 @@ var database = {
 		rows.close();
 	
 		setStatusMsg(newFollowingUpdatesCount+" new updates since "+time_added);	
-		//alert(newFollowingUpdatesCount);
 	    return newFollowingUpdatesCount;	
 	},
 
 //==============================================================================PROCESS UPDATES
-
-	processUpdates: function(data){
-		var dataJ = JSON.parse(data);
-
-		for (dataEntry in dataJ)
-					{
-					entryJ = dataJ[dataEntry];		
-			    	//var USERID = entryJ.USERID;
-				    //var username = entryJ.username;
-					database.insertUpdate(entryJ);
-
-					};		
-		Titanium.API.fireEvent('updatesReceived');			
-	},
-	
-	//atraka processUpdates versija, ja jaieliek db vairakas updates.. - jaliek workerii..
-	processUpdatesAll: function(data){
+	processUpdatesAll: function(data, event){
 		var dataJ = JSON.parse(data);
 
 		db = Titanium.Database.open(user.dbname);
@@ -336,9 +223,12 @@ var database = {
 					var UIDO = entryJ.UIDO;
 					var msg = entryJ.msg;
 					var pic = entryJ.pic;
+					
+					if (pic!="") {
+						downloadVeritweetUpdateImages(pic);
+					}
+					
 					var time_added = entryJ.time_added;
-
-					//alert('id: '+ID+ ' - ' +msg + " - time_added:" + time_added )
 					
 					var views = entryJ.views;
 					var reply = entryJ.replay;
@@ -355,18 +245,22 @@ var database = {
 					  }
 					catch(err)
 					  {
-					  Titanium.API.error("***************************** database.processUpdatesAll() **************************");
-					  Titanium.API.error(err);
-					  Titanium.API.error(msg);
-					  Titanium.API.error("***************************** database.processUpdatesAll() **************************");
-					  //alert(err);
-					  //alert(msg);
+					  //Titanium.API.error("***************************** database.processUpdatesAll() **************************");
+					  //Titanium.API.error(err);
+					  //Titanium.API.error(msg);
+					  //Titanium.API.error("***************************** database.processUpdatesAll() **************************");
 					  }
 								
 					};		
 		
 		db.execute('END TRANSACTION');			
+		
+		if (event==undefined) {
 		Titanium.API.fireEvent('updatesReceived');			
+		} else {
+		Titanium.API.fireEvent(event);				
+		};
+		
 	},
 
 //==============================================================================INSERT UPDATE
@@ -394,9 +288,7 @@ var database = {
 			
 		db.execute("INSERT INTO updates (ID, type, USERID, PID, UID, UIDO, msg, pic, time_added, views, reply, edited, public, twitter_status_id, twitter_update_type, username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )",
         		    ID, type, USERID, PID, UID, UIDO, msg, pic, time_added, views, reply, edited, publicc, twitter_status_id, twitter_update_type, username);
-            
-			
-		
+           	
     	Titanium.API.info(ID+' - '+msg+' inserted into '+USERID+' updates table');
     }, 
 //==============================================================================SELECT USER UPDATES
@@ -404,20 +296,16 @@ var database = {
 
 		db = Titanium.Database.open(user.dbname);
 		var data = [];
-
-		//var rows = db.execute('SELECT * FROM updates WHERE USERID='+userid+' LIMIT 30');
-		//var rows = db.execute('SELECT * FROM updates WHERE USERID='+userid);
 		
-		var rows = db.execute('SELECT USERID, username, msg, time_added FROM updates WHERE USERID='+userid+' ORDER BY DATETIME(time_added) DESC LIMIT 20');
+		var rows = db.execute('SELECT USERID, username, msg, pic, time_added FROM updates WHERE USERID='+userid+' ORDER BY DATETIME(time_added) DESC LIMIT 40');
 				
 		while (rows.isValidRow()) 
 		{
 		  	data.push({
 		    	USERID: rows.fieldByName('USERID'),
 		    	msg: rows.fieldByName('msg'),
+				pic: rows.fieldByName('pic'),
 		    	username: rows.fieldByName('username'),
-		    	postType:'veritweet',
-				type_icon:'icon/icon_twitter.png',
 				time_added:rows.fieldByName('time_added')
   			});
   			  			
@@ -429,24 +317,19 @@ var database = {
 	},
     
 //==============================================================================SELECT FOLLOWING UPDATES
-// te vaig lai selektejas vispirms useru id, kam tiek followots un tad updates
-// funkcija jasauc pec tam, kad updates ir ieladetas no veritweet iekš db
-
 	selectFollowingUpdates: function(){
 		db = Titanium.Database.open(user.dbname);
 		var data = [];
 
 		var followingIdList = database.selectFollowingIdList();
-		//alertalert( followingIdList);
-		var rows = db.execute('SELECT * FROM updates WHERE USERID IN '+followingIdList+' ORDER BY DATETIME(time_added) DESC LIMIT 20');
+		var rows = db.execute('SELECT * FROM updates WHERE USERID IN '+followingIdList+' ORDER BY DATETIME(time_added) DESC LIMIT 40');
 		while (rows.isValidRow()) 
 		{		
 		  	data.push({
 		    	USERID: rows.fieldByName('USERID'),
 		    	msg: rows.fieldByName('msg'),
+				pic: rows.fieldByName('pic'),
 		    	username: rows.fieldByName('username'),
-		    	postType:'veritweet',
-				type_icon:'icon/icon_twitter.png',
 				time_added:rows.fieldByName('time_added'),
 				postId: rows.fieldByName('ID')
   			});
@@ -457,21 +340,27 @@ var database = {
 	    return data;
 	},
 	
-	selectFollowingUpdatesAfterOrBefore: function(time_added, when){
+	selectFollowingUpdatesAfterOrBefore: function(time_added, when, useris){
 		db = Titanium.Database.open(user.dbname);
 		var data = [];
-
-		var followingIdList = database.selectFollowingIdList();
 		
+		if(useris==undefined) {
+			var followingIdList = database.selectFollowingIdList();
+			} else {
+			var followingIdList = "("+useris+")";
+		}
+					
 		var when_added;		
 		if (when="before") {
-			when_added = "DATETIME(time_added) > DATETIME("+time_added+")";
+		//izmanto lai nokacatu vecos messages uz onBottom 
+			when_added = "DATETIME(time_added) < DATETIME("+time_added+")";
+			query = 'SELECT * FROM updates WHERE USERID IN '+followingIdList+' AND '+when_added+' ORDER BY DATETIME(time_added) DESC LIMIT 20';	
+			
 		} else {
 			when_added = "DATETIME(time_added) < DATETIME("+time_added+")";
+			query = 'SELECT * FROM updates WHERE USERID IN '+followingIdList+' AND '+when_added+' ORDER BY DATETIME(time_added) DESC';	
 		};		
-				
-		query = 'SELECT * FROM updates WHERE USERID IN '+followingIdList+' AND '+when_added+' ORDER BY DATETIME(time_added) DESC';		
-		//alert(query);		
+		
 				
 		var rows = db.execute(query);
 		while (rows.isValidRow()) 
@@ -479,9 +368,8 @@ var database = {
 		  	data.push({
 		    	USERID: rows.fieldByName('USERID'),
 		    	msg: rows.fieldByName('msg'),
+				pic: rows.fieldByName('pic'),
 		    	username: rows.fieldByName('username'),
-		    	postType:'veritweet',
-				type_icon:'icon/icon_twitter.png',
 				time_added:rows.fieldByName('time_added'),
 				postId: rows.fieldByName('ID')
   			});
@@ -492,33 +380,59 @@ var database = {
 	    return data;
 	},
 	
-	//==============================================================================SELECT FOLLOWERS UPDATES
-// te vaig lai selektejas vispirms useru id, kas ir followeri un tad updates
-// funkcija jasauc pec tam, kad updates ir ieladetas no veritweet iekš db
-
-	selectFollowersUpdates: function(userid){
-		db = Titanium.Database.open(user.dbname);
-		var data = [];
-
-		var rows = db.execute('SELECT * FROM updates WHERE USERID IN (SELECT USERID FROM followers) ORDER BY ID');
-		while (rows.isValidRow()) 
-		{
-		  	data.push({
-		    	USERID: rows.fieldByName('USERID'),
-		    	msg: rows.fieldByName('msg')
-		    	//username: rows.fieldByName('username')
-  			});
-  			
-  			//Titanium.API.info('select no updates tabulas followers:'+rows.fieldByName('USERID') + ' - '+rows.fieldByName('msg'));
-  			
-			rows.next();
-		}
-		rows.close();
+	//saskaita cik ir apdeitu userim vai visai listei pirms noteiktā laika
+	countUpdatesBefore: function (time_added, useris) {	
+		var UpdatesCount = 0;
 	
-	    return data;
-	},
+		if(time_added!=undefined){
+		
+			if(useris==undefined) {
+				//panem visus kam seko
+				var userList = database.selectFollowingIdList();
+				query = "SELECT count(*) as skaits FROM updates WHERE USERID IN "+userList+" AND DATETIME(time_added) < DATETIME("+time_added+") LIMIT 1";			
+				
+			} else {	
+				query = "SELECT count(*) as skaits FROM updates WHERE USERID='"+useris+"' AND DATETIME(time_added) < DATETIME("+time_added+") LIMIT 1";
+			};
+			
+			db = Titanium.Database.open(user.dbname);
+			var rows = db.execute(query);
+			while (rows.isValidRow()) 
+			{  			
+				UpdatesCount = rows.fieldByName('skaits'); 		
+				rows.next();
+			}
+				rows.close();			
+			}
+	
+		return UpdatesCount;
+	}, 
+	
+	getOldestUpdateTimeAdded: function (useris) {	
+		var UpdateTimeAdded = "";
+	
+			if(useris==undefined) {
+				//panem visus kam seko
+				var userList = database.selectFollowingIdList();
+				query = "SELECT time_added FROM updates WHERE USERID IN "+userList+" ORDER BY DATETIME(time_added) ASC LIMIT 1";			
+				
+			} else {	
+				query = "SELECT time_added FROM updates WHERE USERID='"+useris+"' ORDER BY DATETIME(time_added) ASC LIMIT 1";	
+			};
+				
+			db = Titanium.Database.open(user.dbname);
+			var rows = db.execute(query);
+			while (rows.isValidRow()) 
+			{  			
+				UpdateTimeAdded = rows.fieldByName('time_added'); 		
+				rows.next();
+			}
+			rows.close();		
+	
+		return UpdateTimeAdded;
+	}, 
+	
 //PROFILE
-
 //==============================================================================PROCESS PROFILES
 	processProfile: function(data){
 		var dataJ = JSON.parse(data);
@@ -527,7 +441,6 @@ var database = {
 					{
 					entryJ = dataJ[dataEntry];					
 					database.insertProfile(entryJ);
-					//var useris  = entryJ.USERID;
 					
 					downloadVeritweetProfileImages(entryJ.USERID, entryJ.USERID+entryJ.profilepicture);
 					};		
